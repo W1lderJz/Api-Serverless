@@ -42,13 +42,14 @@ jobs:
         run: go build -ldflags="-s -w" -o bootstrap ./cmd/lambda/
 
       - name: Empaquetar ZIP
-        run: zip -j lambda.zip api-usuarios/bootstrap
+        run: zip -j lambda.zip api-usuarios/bootstrap && ls -lh lambda.zip
 
       - name: Guardar artefacto
         uses: actions/upload-artifact@v4
         with:
           name: lambda-zip
           path: lambda.zip
+          retention-days: 1
 
   deploy:
     name: Terraform Deploy
@@ -63,6 +64,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: lambda-zip
+          path: .
+
+      # Copiar ZIP al directorio terraform/ para que Terraform lo encuentre
+      - name: Posicionar ZIP para Terraform
+        run: |
+          cp lambda.zip terraform/lambda.zip
+          ls -lh terraform/lambda.zip
 
       - name: Setup Terraform ${{ env.TF_VERSION }}
         uses: hashicorp/setup-terraform@v3
@@ -91,6 +99,7 @@ jobs:
           TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
           TF_VAR_s3_uploads_bucket: ${{ secrets.S3_BUCKET_NAME }}
           TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
+          TF_VAR_lambda_zip_path: "./lambda.zip"
         run: terraform plan -out=tfplan
 
       - name: Terraform Apply
@@ -100,8 +109,13 @@ jobs:
           TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
           TF_VAR_s3_uploads_bucket: ${{ secrets.S3_BUCKET_NAME }}
           TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
+          TF_VAR_lambda_zip_path: "./lambda.zip"
         run: terraform apply -auto-approve tfplan
 
       - name: URL del API Gateway
         working-directory: terraform
-        run: terraform output api_gateway_url
+        run: |
+          echo "=== Outputs de Terraform ==="
+          terraform output api_gateway_url
+          echo "=== Estado de la Lambda ==="
+          aws lambda get-function --function-name api-usuarios --query 'Configuration.{Estado:State,Ultima:LastModified,Runtime:Runtime}' 2>/dev/null || echo "Lambda no encontrada"

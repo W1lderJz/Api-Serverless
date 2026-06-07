@@ -18,7 +18,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var ginLambda *ginadapter.GinLambda
+var ginLambda *ginadapter.GinLambdaV2
 
 func init() {
 	databaseURL := os.Getenv("DATABASE_URL")
@@ -71,20 +71,10 @@ func init() {
 	usuarioManejador.RegistrarRutas(router, middleware)
 	archivoManejador.RegistrarRutas(router, middleware)
 
-	ginLambda = ginadapter.New(router)
+	ginLambda = ginadapter.NewV2(router)
 }
 
-func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	if req.HTTPMethod == "OPTIONS" {
-		return events.APIGatewayProxyResponse{
-			StatusCode: 204,
-			Headers: map[string]string{
-				"Access-Control-Allow-Origin":  "*",
-				"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-				"Access-Control-Allow-Headers": "Content-Type, Authorization",
-			},
-		}, nil
-	}
+func Handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	return ginLambda.ProxyWithContext(ctx, req)
 }
 
