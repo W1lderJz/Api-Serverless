@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Usuarios</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/usuarios/crear">
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div *ngIf="cargando$ | async" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ion-text color="danger" *ngIf="error$ | async as error" class="ion-padding">
+    <p>{{ error }}</p>
+  </ion-text>
+
+  <ion-list>
+    <ion-item *ngFor="let usuario of usuarios$ | async">
+      <ion-label (click)="router.navigate(['/usuarios', usuario.id])" style="cursor:pointer">
+        <h2>{{ usuario.nombre }}</h2>
+        <p>{{ usuario.email }}</p>
+      </ion-label>
+      <ion-button fill="clear" slot="end" (click)="editar(usuario.id)">
+        <ion-icon name="pencil-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" slot="end" color="danger" (click)="confirmarEliminar(usuario.id)">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

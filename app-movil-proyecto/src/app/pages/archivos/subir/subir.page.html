@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Subir Archivo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <input
+    type="file"
+    accept="image/jpeg,image/png,image/gif,application/pdf,text/plain"
+    (change)="seleccionarArchivo($event)"
+    style="margin-bottom: 16px; display: block;"
+  />
+
+  <div *ngIf="archivoSeleccionado">
+    <img *ngIf="esImagen && previewUrl" [src]="previewUrl" style="max-width: 100%; margin-bottom: 16px;" />
+    <p *ngIf="!esImagen">
+      <ion-icon name="document-outline"></ion-icon>
+      {{ archivoSeleccionado.name }}
+    </p>
+  </div>
+
+  <ng-container *ngIf="estado$ | async as estado">
+
+    <div *ngIf="estado.cargando" class="ion-margin-bottom">
+      <p>Subiendo... {{ estado.progreso }}%</p>
+      <progress [value]="estado.progreso" max="100" style="width: 100%;"></progress>
+    </div>
+
+    <ion-text color="danger" *ngIf="estado.error">
+      <p>{{ estado.error }}</p>
+    </ion-text>
+
+    <ion-text color="success" *ngIf="estado.urlArchivo">
+      <p>Archivo subido: <strong>{{ estado.urlArchivo }}</strong></p>
+    </ion-text>
+
+  </ng-container>
+
+  <ion-button
+    expand="block"
+    [disabled]="!archivoSeleccionado || ((estado$ | async)?.cargando)"
+    (click)="subir()"
+    class="ion-margin-top"
+  >
+    Subir Archivo
+  </ion-button>
+
+</ion-content>

@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarSesion()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div *ngIf="cargando$ | async" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando datos en paralelo...</p>
+  </div>
+
+  <div *ngIf="error$ | async as error" class="ion-padding">
+    <ion-text color="danger">
+      <p>{{ error }}</p>
+    </ion-text>
+  </div>
+
+  <ng-container *ngIf="datos$ | async as datos">
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Mi Perfil</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Nombre:</strong> {{ datos.perfil.nombre }}</p>
+        <p><strong>Email:</strong> {{ datos.perfil.email }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Usuarios del Sistema</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Total de usuarios: <strong>{{ datos.usuarios.length }}</strong></p>
+        <ion-button expand="block" routerLink="/usuarios">
+          Ver lista de usuarios
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Archivos</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" routerLink="/archivos/subir">
+          Subir archivo
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+  </ng-container>
+
+</ion-content>
