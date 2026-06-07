@@ -37,9 +37,6 @@ func init() {
 	if err != nil {
 		log.Fatalf("Error abriendo DB: %v", err)
 	}
-	if err := db.Ping(); err != nil {
-		log.Fatalf("Error conectando a DB: %v", err)
-	}
 	db.SetMaxOpenConns(5)
 	db.SetMaxIdleConns(2)
 
