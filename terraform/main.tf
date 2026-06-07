@@ -108,7 +108,7 @@ resource "aws_apigatewayv2_api" "api_gw" {
 
 resource "aws_apigatewayv2_stage" "prod" {
   api_id      = aws_apigatewayv2_api.api_gw.id
-  name        = "prod"
+  name        = "$default"
   auto_deploy = true
 
   access_log_settings {
