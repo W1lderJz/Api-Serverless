@@ -83,7 +83,7 @@ resource "aws_lambda_function" "api_usuarios" {
       DATABASE_URL = var.database_url
       JWT_SECRET   = var.jwt_secret
       S3_BUCKET    = aws_s3_bucket.uploads.bucket
-      AWS_REGION   = var.aws_region
+      APP_REGION   = var.aws_region
       GIN_MODE     = "release"
     }
   }

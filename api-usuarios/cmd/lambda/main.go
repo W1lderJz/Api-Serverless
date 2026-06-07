@@ -24,13 +24,13 @@ func init() {
 	databaseURL := os.Getenv("DATABASE_URL")
 	jwtSecret := os.Getenv("JWT_SECRET")
 	s3Bucket := os.Getenv("S3_BUCKET")
-	awsRegion := os.Getenv("AWS_REGION")
+	appRegion := os.Getenv("APP_REGION")
 
 	if databaseURL == "" || jwtSecret == "" || s3Bucket == "" {
 		log.Fatal("DATABASE_URL, JWT_SECRET y S3_BUCKET son requeridos")
 	}
-	if awsRegion == "" {
-		awsRegion = "us-east-1"
+	if appRegion == "" {
+		appRegion = "us-east-1"
 	}
 
 	db, err := sql.Open("postgres", databaseURL)
@@ -46,7 +46,7 @@ func init() {
 	usuarioRepo := postgres.NuevoUsuarioRepositorio(db)
 	usuarioServicio := aplicacion.NuevoUsuarioServicio(usuarioRepo)
 
-	archivoRepo, err := s3adaptador.NuevoS3ArchivoRepositorio(s3Bucket, awsRegion)
+	archivoRepo, err := s3adaptador.NuevoS3ArchivoRepositorio(s3Bucket, appRegion)
 	if err != nil {
 		log.Fatalf("Error inicializando S3: %v", err)
 	}
