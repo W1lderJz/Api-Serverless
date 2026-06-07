@@ -1,33 +1,27 @@
-# Node
 node_modules/
 dist/
 .angular/
 
-# Go
 *.exe
 api-usuarios/api-usuarios
 api-usuarios/uploads/
 
-# Environment
 .env
 *.env
 
-# Terraform
 .terraform/
 *.tfstate
 *.tfstate.backup
 .terraform.lock.hcl
+terraform/terraform.tfvars
 
-# IDE
+lambda.zip
+api-usuarios/bootstrap
+
 .vscode/
 .idea/
-
-# Kiro
 .kiro/
-
-# Notas personales
 notas/
 
-# OS
 .DS_Store
 Thumbs.db

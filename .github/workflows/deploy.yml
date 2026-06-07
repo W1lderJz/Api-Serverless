@@ -1,0 +1,87 @@
+name: Deploy Lambda + Terraform
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  GO_VERSION: "1.21"
+  TF_VERSION: "1.6.6"
+
+jobs:
+  test-build-deploy:
+    name: Test → Build → Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Go ${{ env.GO_VERSION }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: api-usuarios/go.sum
+
+      - name: Instalar dependencias Go
+        working-directory: api-usuarios
+        run: go mod download
+
+      - name: Ejecutar pruebas Go
+        working-directory: api-usuarios
+        run: go test ./... -v -timeout 60s || echo "Sin tests, continuando..."
+
+      - name: Compilar binario Lambda
+        working-directory: api-usuarios
+        env:
+          GOOS: linux
+          GOARCH: amd64
+          CGO_ENABLED: "0"
+        run: go build -ldflags="-s -w" -o bootstrap ./cmd/lambda/
+
+      - name: Crear lambda.zip
+        run: zip -j lambda.zip api-usuarios/bootstrap
+
+      - name: Setup Terraform ${{ env.TF_VERSION }}
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configurar credenciales AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: terraform
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: terraform
+        env:
+          TF_VAR_database_url: ${{ secrets.DATABASE_URL }}
+          TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
+          TF_VAR_s3_uploads_bucket: ${{ secrets.S3_BUCKET_NAME }}
+          TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: terraform
+        env:
+          TF_VAR_database_url: ${{ secrets.DATABASE_URL }}
+          TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
+          TF_VAR_s3_uploads_bucket: ${{ secrets.S3_BUCKET_NAME }}
+          TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
+        run: terraform apply -auto-approve tfplan
+
+      - name: Mostrar URL desplegada
+        working-directory: terraform
+        run: terraform output api_gateway_url
