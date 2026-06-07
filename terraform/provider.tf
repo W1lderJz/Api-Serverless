@@ -7,6 +7,12 @@ terraform {
       version = "~> 5.0"
     }
   }
+
+  backend "s3" {
+    bucket = "tf-state-api-serverless-wjz"
+    key    = "api-serverless/terraform.tfstate"
+    region = "us-east-1"
+  }
 }
 
 provider "aws" {
