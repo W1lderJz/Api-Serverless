@@ -84,15 +84,6 @@ jobs:
         working-directory: terraform
         run: terraform validate
 
-      - name: Terraform Import bucket existente
-        working-directory: terraform
-        env:
-          TF_VAR_database_url: ${{ secrets.DATABASE_URL }}
-          TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
-          TF_VAR_s3_uploads_bucket: ${{ secrets.S3_BUCKET_NAME }}
-          TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
-        run: terraform import aws_s3_bucket.uploads ${{ secrets.S3_BUCKET_NAME }} || true
-
       - name: Terraform Plan
         working-directory: terraform
         env:
