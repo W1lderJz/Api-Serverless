@@ -1,53 +1,74 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
     </ion-buttons>
     <ion-title>Subir Archivo</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content>
+  <div class="upload-wrap">
 
-  <input
-    type="file"
-    accept="image/jpeg,image/png,image/gif,application/pdf,text/plain"
-    (change)="seleccionarArchivo($event)"
-    style="margin-bottom: 16px; display: block;"
-  />
+    <div class="drop-zone" (click)="fileInput.click()" [class.has-file]="archivoSeleccionado">
+      <input #fileInput type="file"
+        accept="image/jpeg,image/png,image/gif,application/pdf,text/plain"
+        (change)="seleccionarArchivo($event)"
+        style="display:none" />
 
-  <div *ngIf="archivoSeleccionado">
-    <img *ngIf="esImagen && previewUrl" [src]="previewUrl" style="max-width: 100%; margin-bottom: 16px;" />
-    <p *ngIf="!esImagen">
-      <ion-icon name="document-outline"></ion-icon>
-      {{ archivoSeleccionado.name }}
-    </p>
-  </div>
+      <ng-container *ngIf="!archivoSeleccionado">
+        <div class="drop-icon-box">
+          <ion-icon name="cloud-upload-outline"></ion-icon>
+        </div>
+        <strong>Seleccionar archivo</strong>
+        <small>JPG, PNG, GIF, PDF, TXT · Máx 10MB</small>
+      </ng-container>
 
-  <ng-container *ngIf="estado$ | async as estado">
-
-    <div *ngIf="estado.cargando" class="ion-margin-bottom">
-      <p>Subiendo... {{ estado.progreso }}%</p>
-      <progress [value]="estado.progreso" max="100" style="width: 100%;"></progress>
+      <ng-container *ngIf="archivoSeleccionado">
+        <img *ngIf="esImagen && previewUrl" [src]="previewUrl" class="preview-img" />
+        <div *ngIf="!esImagen" class="file-preview">
+          <ion-icon name="document-outline"></ion-icon>
+          <span>{{ archivoSeleccionado.name }}</span>
+        </div>
+      </ng-container>
     </div>
 
-    <ion-text color="danger" *ngIf="estado.error">
-      <p>{{ estado.error }}</p>
-    </ion-text>
+    <ng-container *ngIf="estado$ | async as st">
+      <div class="progress-box" *ngIf="st.cargando">
+        <div class="progress-header">
+          <span>Subiendo a S3...</span>
+          <span class="pct">{{ st.progreso }}%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" [style.width]="st.progreso + '%'"></div>
+        </div>
+      </div>
 
-    <ion-text color="success" *ngIf="estado.urlArchivo">
-      <p>Archivo subido: <strong>{{ estado.urlArchivo }}</strong></p>
-    </ion-text>
+      <div class="result-box error" *ngIf="st.error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span>{{ st.error }}</span>
+      </div>
 
-  </ng-container>
+      <div class="result-box success" *ngIf="st.urlArchivo">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <div>
+          <p class="result-title">Archivo subido a S3</p>
+          <p class="result-url">{{ st.urlArchivo }}</p>
+        </div>
+      </div>
+    </ng-container>
 
-  <ion-button
-    expand="block"
-    [disabled]="!archivoSeleccionado || ((estado$ | async)?.cargando)"
-    (click)="subir()"
-    class="ion-margin-top"
-  >
-    Subir Archivo
-  </ion-button>
+    <button class="btn-upload"
+      [disabled]="!archivoSeleccionado || ((estado$ | async)?.cargando)"
+      (click)="subir()">
+      <ion-icon name="cloud-upload-outline"></ion-icon>
+      Subir Archivo
+    </button>
 
+    <button class="btn-cancel" *ngIf="archivoSeleccionado"
+      (click)="archivoSeleccionado = null; previewUrl = null; vm.limpiar()">
+      Cancelar
+    </button>
+
+  </div>
 </ion-content>

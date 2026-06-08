@@ -3,60 +3,61 @@
     <ion-title>Dashboard</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="cerrarSesion()">
-        <ion-icon name="log-out-outline"></ion-icon>
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content [fullscreen]="true">
 
-  <div *ngIf="cargando$ | async" class="ion-text-center ion-padding">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>Cargando datos en paralelo...</p>
+  <div *ngIf="cargando$ | async" class="ion-text-center ion-padding-top" style="padding-top:40px">
+    <ion-spinner name="dots" color="primary"></ion-spinner>
+    <p style="color:#92949C;font-size:13px;margin-top:12px">Cargando datos...</p>
   </div>
 
-  <div *ngIf="error$ | async as error" class="ion-padding">
-    <ion-text color="danger">
-      <p>{{ error }}</p>
-    </ion-text>
-  </div>
+  <ng-container *ngIf="datos$ | async as d">
 
-  <ng-container *ngIf="datos$ | async as datos">
+    <div class="profile-card">
+      <div class="profile-avatar">{{ d.perfil.nombre.charAt(0).toUpperCase() }}</div>
+      <div class="profile-info">
+        <h2 class="profile-name">{{ d.perfil.nombre }}</h2>
+        <p class="profile-email">{{ d.perfil.email }}</p>
+        <span class="profile-badge">
+          <span class="badge-dot"></span>
+          AWS Lambda · {{ d.usuarios.length }} usuario{{ d.usuarios.length !== 1 ? 's' : '' }}
+        </span>
+      </div>
+    </div>
 
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Mi Perfil</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p><strong>Nombre:</strong> {{ datos.perfil.nombre }}</p>
-        <p><strong>Email:</strong> {{ datos.perfil.email }}</p>
-      </ion-card-content>
-    </ion-card>
+    <p class="section-title">Acciones</p>
 
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Usuarios del Sistema</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p>Total de usuarios: <strong>{{ datos.usuarios.length }}</strong></p>
-        <ion-button expand="block" routerLink="/usuarios">
-          Ver lista de usuarios
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
+    <div class="menu-card" routerLink="/usuarios">
+      <div class="menu-icon-box purple">
+        <ion-icon name="people-outline"></ion-icon>
+      </div>
+      <div class="menu-text">
+        <strong>Usuarios</strong>
+        <small>Ver, crear, editar y eliminar</small>
+      </div>
+      <ion-icon name="chevron-forward-outline" color="medium"></ion-icon>
+    </div>
 
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Archivos</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-button expand="block" routerLink="/archivos/subir">
-          Subir archivo
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
+    <div class="menu-card" routerLink="/archivos/subir">
+      <div class="menu-icon-box pink">
+        <ion-icon name="cloud-upload-outline"></ion-icon>
+      </div>
+      <div class="menu-text">
+        <strong>Subir Archivo</strong>
+        <small>Upload a Amazon S3</small>
+      </div>
+      <ion-icon name="chevron-forward-outline" color="medium"></ion-icon>
+    </div>
 
   </ng-container>
+
+  <div *ngIf="error$ | async as e" class="ion-padding">
+    <ion-note color="danger">{{ e }}</ion-note>
+  </div>
 
 </ion-content>

@@ -4,6 +4,7 @@ import { ArchivoViewModel } from '../../../viewmodels/archivo.viewmodel';
 @Component({
   selector: 'app-subir',
   templateUrl: './subir.page.html',
+  styleUrls: ['./subir.page.scss'],
   standalone: false,
 })
 export class SubirPage {
@@ -13,7 +14,7 @@ export class SubirPage {
   previewUrl: string | null = null;
   esImagen = false;
 
-  constructor(private vm: ArchivoViewModel) {}
+  constructor(public vm: ArchivoViewModel) {}
 
   seleccionarArchivo(evento: Event): void {
     const input = evento.target as HTMLInputElement;

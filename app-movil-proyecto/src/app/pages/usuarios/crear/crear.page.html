@@ -1,51 +1,50 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/usuarios"></ion-back-button>
+      <ion-back-button defaultHref="/usuarios" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Crear Usuario</ion-title>
+    <ion-title>Nuevo Usuario</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content>
+  <div class="form-wrap">
+    <form [formGroup]="formulario" (ngSubmit)="crear()">
 
-  <form [formGroup]="formulario" (ngSubmit)="crear()">
+      <div class="field">
+        <label>Nombre</label>
+        <div class="input-row">
+          <ion-icon name="person-outline"></ion-icon>
+          <ion-input type="text" placeholder="Nombre completo" formControlName="nombre"></ion-input>
+        </div>
+        <span class="ferr" *ngIf="nombre?.invalid && nombre?.touched">Nombre requerido</span>
+      </div>
 
-    <ion-item>
-      <ion-label position="floating">Nombre</ion-label>
-      <ion-input type="text" formControlName="nombre"></ion-input>
-    </ion-item>
-    <ion-text color="danger" *ngIf="nombre?.invalid && nombre?.touched">
-      <small *ngIf="nombre?.errors?.['required']">El nombre es requerido</small>
-    </ion-text>
+      <div class="field">
+        <label>Email</label>
+        <div class="input-row">
+          <ion-icon name="mail-outline"></ion-icon>
+          <ion-input type="email" placeholder="correo@ejemplo.com" formControlName="email"></ion-input>
+        </div>
+        <span class="ferr" *ngIf="email?.invalid && email?.touched">Email inválido</span>
+      </div>
 
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" formControlName="email"></ion-input>
-    </ion-item>
-    <ion-text color="danger" *ngIf="email?.invalid && email?.touched">
-      <small *ngIf="email?.errors?.['required']">El email es requerido</small>
-      <small *ngIf="email?.errors?.['email']">Ingrese un email válido</small>
-    </ion-text>
+      <div class="field">
+        <label>Contraseña</label>
+        <div class="input-row">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <ion-input type="password" placeholder="Mínimo 8 caracteres" formControlName="password"></ion-input>
+        </div>
+        <span class="ferr" *ngIf="password?.invalid && password?.touched">Mínimo 8 caracteres</span>
+      </div>
 
-    <ion-item>
-      <ion-label position="floating">Contraseña</ion-label>
-      <ion-input type="password" formControlName="password"></ion-input>
-    </ion-item>
-    <ion-text color="danger" *ngIf="password?.invalid && password?.touched">
-      <small *ngIf="password?.errors?.['required']">La contraseña es requerida</small>
-      <small *ngIf="password?.errors?.['minlength']">Mínimo 8 caracteres</small>
-    </ion-text>
+      <div class="api-err" *ngIf="error$ | async as e">{{ e }}</div>
 
-    <ion-text color="danger" *ngIf="error$ | async as error">
-      <p>{{ error }}</p>
-    </ion-text>
+      <button type="submit" class="btn-submit" [disabled]="cargando$ | async">
+        <ion-spinner *ngIf="cargando$ | async" name="crescent" class="spin"></ion-spinner>
+        <span *ngIf="!(cargando$ | async)">Guardar Usuario</span>
+      </button>
 
-    <ion-button expand="block" type="submit" [disabled]="cargando$ | async" class="ion-margin-top">
-      <ion-spinner *ngIf="cargando$ | async" name="crescent"></ion-spinner>
-      <span *ngIf="!(cargando$ | async)">Crear Usuario</span>
-    </ion-button>
-
-  </form>
-
+    </form>
+  </div>
 </ion-content>

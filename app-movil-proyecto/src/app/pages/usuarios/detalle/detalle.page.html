@@ -1,53 +1,58 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/usuarios"></ion-back-button>
+      <ion-back-button defaultHref="/usuarios" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Detalle de Usuario</ion-title>
+    <ion-title>Detalle</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="editar()">
-        <ion-icon name="pencil-outline"></ion-icon>
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content>
+  <div class="detail-wrap">
 
-  <div *ngIf="cargando$ | async" class="ion-text-center ion-padding">
-    <ion-spinner name="crescent"></ion-spinner>
+    <div *ngIf="cargando$ | async" class="ion-text-center ion-padding">
+      <ion-spinner name="dots" color="primary"></ion-spinner>
+    </div>
+
+    <ng-container *ngIf="usuario$ | async as u">
+
+      <div class="profile-header">
+        <div class="big-ava">{{ u.nombre.charAt(0).toUpperCase() }}</div>
+        <h2>{{ u.nombre }}</h2>
+        <span class="id-badge">ID #{{ u.id }}</span>
+      </div>
+
+      <div class="info-card">
+        <div class="info-row">
+          <div class="info-icon"><ion-icon name="mail-outline"></ion-icon></div>
+          <div class="info-text">
+            <span class="info-label">Email</span>
+            <span class="info-val">{{ u.email }}</span>
+          </div>
+        </div>
+        <div class="info-divider"></div>
+        <div class="info-row">
+          <div class="info-icon"><ion-icon name="calendar-outline"></ion-icon></div>
+          <div class="info-text">
+            <span class="info-label">Registrado</span>
+            <span class="info-val">{{ u.created_at | date:'mediumDate' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-edit" (click)="editar()">
+        <ion-icon name="create-outline"></ion-icon>
+        Editar Usuario
+      </button>
+
+    </ng-container>
+
+    <ion-note color="danger" *ngIf="error$ | async as e">{{ e }}</ion-note>
+
   </div>
-
-  <ion-text color="danger" *ngIf="error$ | async as error">
-    <p>{{ error }}</p>
-  </ion-text>
-
-  <ion-card *ngIf="usuario$ | async as usuario">
-    <ion-card-header>
-      <ion-card-title>{{ usuario.nombre }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="none">
-        <ion-item>
-          <ion-label>
-            <p>Email</p>
-            <h3>{{ usuario.email }}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <p>Creado</p>
-            <h3>{{ usuario.created_at | date:'medium' }}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <p>Actualizado</p>
-            <h3>{{ usuario.updated_at | date:'medium' }}</h3>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
-
 </ion-content>

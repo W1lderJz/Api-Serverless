@@ -1,46 +1,46 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/usuarios"></ion-back-button>
+      <ion-back-button defaultHref="/usuarios" text=""></ion-back-button>
     </ion-buttons>
     <ion-title>Editar Usuario</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content>
+  <div class="form-wrap">
 
-  <div *ngIf="cargando$ | async" class="ion-text-center ion-padding">
-    <ion-spinner name="crescent"></ion-spinner>
+    <div *ngIf="cargando$ | async" class="ion-text-center" style="padding:20px 0">
+      <ion-spinner name="dots" color="primary"></ion-spinner>
+    </div>
+
+    <form [formGroup]="formulario" (ngSubmit)="actualizar()">
+
+      <div class="field">
+        <label>Nombre</label>
+        <div class="input-row">
+          <ion-icon name="person-outline"></ion-icon>
+          <ion-input type="text" placeholder="Nombre completo" formControlName="nombre"></ion-input>
+        </div>
+        <span class="ferr" *ngIf="nombre?.invalid && nombre?.touched">Nombre requerido</span>
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <div class="input-row">
+          <ion-icon name="mail-outline"></ion-icon>
+          <ion-input type="email" placeholder="correo@ejemplo.com" formControlName="email"></ion-input>
+        </div>
+        <span class="ferr" *ngIf="email?.invalid && email?.touched">Email inválido</span>
+      </div>
+
+      <div class="api-err" *ngIf="error$ | async as e">{{ e }}</div>
+
+      <button type="submit" class="btn-submit" [disabled]="cargando$ | async">
+        <ion-spinner *ngIf="cargando$ | async" name="crescent" class="spin"></ion-spinner>
+        <span *ngIf="!(cargando$ | async)">Guardar Cambios</span>
+      </button>
+
+    </form>
   </div>
-
-  <form [formGroup]="formulario" (ngSubmit)="actualizar()">
-
-    <ion-item>
-      <ion-label position="floating">Nombre</ion-label>
-      <ion-input type="text" formControlName="nombre"></ion-input>
-    </ion-item>
-    <ion-text color="danger" *ngIf="nombre?.invalid && nombre?.touched">
-      <small *ngIf="nombre?.errors?.['required']">El nombre es requerido</small>
-    </ion-text>
-
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" formControlName="email"></ion-input>
-    </ion-item>
-    <ion-text color="danger" *ngIf="email?.invalid && email?.touched">
-      <small *ngIf="email?.errors?.['required']">El email es requerido</small>
-      <small *ngIf="email?.errors?.['email']">Ingrese un email válido</small>
-    </ion-text>
-
-    <ion-text color="danger" *ngIf="error$ | async as error">
-      <p>{{ error }}</p>
-    </ion-text>
-
-    <ion-button expand="block" type="submit" [disabled]="cargando$ | async" class="ion-margin-top">
-      <ion-spinner *ngIf="cargando$ | async" name="crescent"></ion-spinner>
-      <span *ngIf="!(cargando$ | async)">Guardar Cambios</span>
-    </ion-button>
-
-  </form>
-
 </ion-content>

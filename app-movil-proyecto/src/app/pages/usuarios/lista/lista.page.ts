@@ -6,6 +6,7 @@ import { UsuarioViewModel } from '../../../viewmodels/usuario.viewmodel';
 @Component({
   selector: 'app-lista',
   templateUrl: './lista.page.html',
+  styleUrls: ['./lista.page.scss'],
   standalone: false,
 })
 export class ListaPage implements OnInit {

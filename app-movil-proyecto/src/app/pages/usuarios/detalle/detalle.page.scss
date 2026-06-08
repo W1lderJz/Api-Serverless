@@ -1,0 +1,122 @@
+:host {
+  --accent: #6C63FF;
+}
+
+.detail-wrap {
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-header {
+  text-align: center;
+  padding: 8px 0 4px;
+
+  .big-ava {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #6C63FF, #9B59B6);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    font-weight: 800;
+    color: white;
+    margin: 0 auto 14px;
+    box-shadow: 0 8px 24px rgba(108, 99, 255, 0.35);
+  }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1A1A2E;
+    margin: 0 0 8px;
+  }
+
+  .id-badge {
+    display: inline-block;
+    background: rgba(108, 99, 255, 0.1);
+    color: var(--accent);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+}
+
+.info-card {
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 2px 14px rgba(108, 99, 255, 0.09);
+  overflow: hidden;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+
+  .info-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background: rgba(108, 99, 255, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    ion-icon {
+      font-size: 18px;
+      color: var(--accent);
+    }
+  }
+
+  .info-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .info-label {
+      font-size: 11px;
+      color: #92949C;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-val {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1A1A2E;
+    }
+  }
+}
+
+.info-divider {
+  height: 1px;
+  background: #F4F5F8;
+  margin: 0 16px;
+}
+
+.btn-edit {
+  width: 100%;
+  height: 52px;
+  background: linear-gradient(135deg, #6C63FF, #9B59B6);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(108, 99, 255, 0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  ion-icon { font-size: 18px; }
+}

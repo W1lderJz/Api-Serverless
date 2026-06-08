@@ -1,40 +1,47 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
     </ion-buttons>
     <ion-title>Usuarios</ion-title>
     <ion-buttons slot="end">
       <ion-button routerLink="/usuarios/crear">
-        <ion-icon name="add-outline"></ion-icon>
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <div class="list-wrap">
 
-  <div *ngIf="cargando$ | async" class="ion-text-center ion-padding">
-    <ion-spinner name="crescent"></ion-spinner>
+    <div *ngIf="cargando$ | async" class="ion-text-center ion-padding">
+      <ion-spinner name="dots" color="primary"></ion-spinner>
+    </div>
+
+    <ion-note color="danger" *ngIf="error$ | async as e" class="err-note">{{ e }}</ion-note>
+
+    <div class="user-item" *ngFor="let u of usuarios$ | async"
+         (click)="router.navigate(['/usuarios', u.id])">
+      <div class="user-ava">{{ u.nombre.charAt(0).toUpperCase() }}</div>
+      <div class="user-info">
+        <strong>{{ u.nombre }}</strong>
+        <small>{{ u.email }}</small>
+      </div>
+      <div class="user-actions" (click)="$event.stopPropagation()">
+        <button class="btn-edit" (click)="editar(u.id)">
+          <ion-icon name="pencil-outline"></ion-icon>
+        </button>
+        <button class="btn-del" (click)="confirmarEliminar(u.id)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="!(cargando$ | async) && (usuarios$ | async)?.length === 0" class="empty">
+      <ion-icon name="people-outline"></ion-icon>
+      <p>No hay usuarios aún</p>
+    </div>
+
   </div>
-
-  <ion-text color="danger" *ngIf="error$ | async as error" class="ion-padding">
-    <p>{{ error }}</p>
-  </ion-text>
-
-  <ion-list>
-    <ion-item *ngFor="let usuario of usuarios$ | async">
-      <ion-label (click)="router.navigate(['/usuarios', usuario.id])" style="cursor:pointer">
-        <h2>{{ usuario.nombre }}</h2>
-        <p>{{ usuario.email }}</p>
-      </ion-label>
-      <ion-button fill="clear" slot="end" (click)="editar(usuario.id)">
-        <ion-icon name="pencil-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" slot="end" color="danger" (click)="confirmarEliminar(usuario.id)">
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-button>
-    </ion-item>
-  </ion-list>
-
 </ion-content>

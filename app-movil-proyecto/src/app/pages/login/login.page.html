@@ -1,44 +1,67 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Iniciar Sesión</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="login-bg">
+  <div class="login-wrap">
 
-<ion-content class="ion-padding">
+    <div class="login-hero">
+      <div class="login-icon-box">
+        <ion-icon name="cloud-done-outline"></ion-icon>
+      </div>
+      <h1>Bienvenido</h1>
+      <p>API Serverless · AWS Lambda</p>
+    </div>
 
-  <form [formGroup]="formulario" (ngSubmit)="iniciarSesion()">
+    <div class="login-card">
+      <form [formGroup]="formulario" (ngSubmit)="iniciarSesion()">
 
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" formControlName="email"></ion-input>
-    </ion-item>
-    <ion-text color="danger" *ngIf="email?.invalid && email?.touched">
-      <small *ngIf="email?.errors?.['required']">El email es requerido</small>
-      <small *ngIf="email?.errors?.['email']">Ingrese un email válido</small>
-    </ion-text>
+        <ion-list lines="none" class="form-list">
+          <ion-item class="form-item">
+            <ion-icon slot="start" name="mail-outline"></ion-icon>
+            <ion-input
+              type="email"
+              placeholder="Email"
+              formControlName="email"
+              label-placement="stacked">
+            </ion-input>
+          </ion-item>
+          <ion-text color="danger" class="ferr" *ngIf="email?.invalid && email?.touched">
+            <span *ngIf="email?.errors?.['required']">Email requerido</span>
+            <span *ngIf="email?.errors?.['email']">Email inválido</span>
+          </ion-text>
 
-    <ion-item>
-      <ion-label position="floating">Contraseña</ion-label>
-      <ion-input type="password" formControlName="password"></ion-input>
-    </ion-item>
-    <ion-text color="danger" *ngIf="password?.invalid && password?.touched">
-      <small *ngIf="password?.errors?.['required']">La contraseña es requerida</small>
-      <small *ngIf="password?.errors?.['minlength']">Mínimo 8 caracteres</small>
-    </ion-text>
+          <ion-item class="form-item">
+            <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
+            <ion-input
+              type="password"
+              placeholder="Contraseña"
+              formControlName="password"
+              label-placement="stacked">
+            </ion-input>
+          </ion-item>
+          <ion-text color="danger" class="ferr" *ngIf="password?.invalid && password?.touched">
+            <span *ngIf="password?.errors?.['required']">Contraseña requerida</span>
+            <span *ngIf="password?.errors?.['minlength']">Mínimo 8 caracteres</span>
+          </ion-text>
+        </ion-list>
 
-    <ion-text color="danger" *ngIf="mensajeError">
-      <p>{{ mensajeError }}</p>
-    </ion-text>
+        <ion-text color="danger" class="api-err" *ngIf="mensajeError">
+          <p>{{ mensajeError }}</p>
+        </ion-text>
 
-    <ion-button expand="block" type="submit" [disabled]="cargando" class="ion-margin-top">
-      <ion-spinner *ngIf="cargando" name="crescent"></ion-spinner>
-      <span *ngIf="!cargando">Iniciar Sesión</span>
-    </ion-button>
+        <ion-button expand="block" type="submit" [disabled]="cargando" class="btn-login">
+          <ion-spinner *ngIf="cargando" name="crescent"></ion-spinner>
+          <span *ngIf="!cargando">Iniciar Sesión</span>
+        </ion-button>
 
-  </form>
+        <ion-button expand="block" fill="outline" routerLink="/registro" class="btn-register">
+          Crear cuenta
+        </ion-button>
 
-  <ion-button expand="block" fill="clear" routerLink="/registro">
-    ¿No tienes cuenta? Regístrate
-  </ion-button>
+      </form>
+    </div>
 
+    <div class="aws-status">
+      <span class="live-dot"></span>
+      <span>Conectado a AWS Lambda</span>
+    </div>
+
+  </div>
 </ion-content>

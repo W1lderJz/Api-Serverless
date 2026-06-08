@@ -1,19 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
 import { UsuarioViewModel } from '../../../viewmodels/usuario.viewmodel';
 
 @Component({
   selector: 'app-editar',
   templateUrl: './editar.page.html',
+  styleUrls: ['./editar.page.scss'],
   standalone: false,
 })
-export class EditarPage implements OnInit {
+export class EditarPage implements OnInit, OnDestroy {
 
   formulario: FormGroup;
   usuarioId!: number;
   readonly cargando$ = this.vm.cargando$;
   readonly error$ = this.vm.error$;
+  private sub = new Subscription();
 
   constructor(
     private fb: FormBuilder,
@@ -30,11 +34,15 @@ export class EditarPage implements OnInit {
   ngOnInit(): void {
     this.usuarioId = Number(this.route.snapshot.paramMap.get('id'));
     this.vm.cargarUsuarioPorId(this.usuarioId);
-    this.vm.usuarioActual$.subscribe(usuario => {
-      if (usuario) {
-        this.formulario.patchValue({ nombre: usuario.nombre, email: usuario.email });
-      }
-    });
+    this.sub.add(
+      this.vm.usuarioActual$.pipe(filter(u => !!u), take(1)).subscribe(usuario => {
+        this.formulario.patchValue({ nombre: usuario!.nombre, email: usuario!.email });
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
   get nombre() { return this.formulario.get('nombre'); }
@@ -46,8 +54,9 @@ export class EditarPage implements OnInit {
       return;
     }
     this.vm.actualizarUsuario(this.usuarioId, this.formulario.value);
-    this.vm.cargando$.subscribe(cargando => {
-      if (!cargando) this.router.navigate(['/usuarios']);
+    const s = this.vm.cargando$.pipe(filter(c => !c), take(1)).subscribe(() => {
+      this.router.navigate(['/usuarios']);
     });
+    this.sub.add(s);
   }
 }

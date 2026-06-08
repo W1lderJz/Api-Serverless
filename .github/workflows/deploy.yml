@@ -66,7 +66,6 @@ jobs:
           name: lambda-zip
           path: .
 
-      # Copiar ZIP al directorio terraform/ para que Terraform lo encuentre
       - name: Posicionar ZIP para Terraform
         run: |
           cp lambda.zip terraform/lambda.zip

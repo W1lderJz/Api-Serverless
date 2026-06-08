@@ -1,2 +1,39 @@
-// Estilos de la página de registro
-// Los estilos globales de Ionic se aplican mediante las clases ion-* en el template
+:host {
+  --accent: #6C63FF;
+}
+
+.form-list {
+  background: transparent;
+  padding: 16px 0 0;
+}
+
+.form-item {
+  --background: #F4F5F8;
+  --border-radius: 12px;
+  --border-width: 0;
+  --inner-border-width: 0;
+  --padding-start: 14px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+
+  ion-icon {
+    color: #6C63FF;
+    font-size: 18px;
+    margin-right: 10px;
+  }
+}
+
+.ferr {
+  display: block;
+  padding: 0 4px 8px;
+  font-size: 12px;
+}
+
+.btn-main {
+  --background: linear-gradient(135deg, #6C63FF, #9B59B6);
+  --border-radius: 12px;
+  --box-shadow: 0 6px 20px rgba(108,99,255,0.40);
+  font-weight: 700;
+  margin-top: 8px;
+  margin-bottom: 10px;
+}
