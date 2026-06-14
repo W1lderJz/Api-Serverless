@@ -10,6 +10,7 @@ import { CrearPage } from './pages/usuarios/crear/crear.page';
 import { EditarPage } from './pages/usuarios/editar/editar.page';
 import { SubirPage } from './pages/archivos/subir/subir.page';
 import { DetallePage } from './pages/usuarios/detalle/detalle.page';
+import { NotificacionesPage } from './pages/notificaciones/notificaciones.page';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'usuarios/:id', component: DetallePage, canActivate: [AuthGuard] },
   { path: 'usuarios/:id/editar', component: EditarPage, canActivate: [AuthGuard] },
   { path: 'archivos/subir', component: SubirPage, canActivate: [AuthGuard] },
+  { path: 'notificaciones', component: NotificacionesPage, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

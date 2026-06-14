@@ -18,6 +18,7 @@ import { CrearPage } from './pages/usuarios/crear/crear.page';
 import { EditarPage } from './pages/usuarios/editar/editar.page';
 import { SubirPage } from './pages/archivos/subir/subir.page';
 import { DetallePage } from './pages/usuarios/detalle/detalle.page';
+import { NotificacionesPage } from './pages/notificaciones/notificaciones.page';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { DetallePage } from './pages/usuarios/detalle/detalle.page';
     CrearPage,
     EditarPage,
     SubirPage,
+    NotificacionesPage,
   ],
   imports: [
     BrowserModule,

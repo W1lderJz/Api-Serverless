@@ -33,7 +33,7 @@ jobs:
         working-directory: api-usuarios
         run: go test ./... -v -timeout 60s || echo "Sin tests, continuando..."
 
-      - name: Compilar Lambda
+      - name: Compilar Lambda principal
         working-directory: api-usuarios
         env:
           GOOS: linux
@@ -41,14 +41,31 @@ jobs:
           CGO_ENABLED: "0"
         run: go build -ldflags="-s -w" -o bootstrap ./cmd/lambda/
 
-      - name: Empaquetar ZIP
+      - name: Empaquetar lambda.zip
         run: zip -j lambda.zip api-usuarios/bootstrap && ls -lh lambda.zip
 
-      - name: Guardar artefacto
+      - name: Instalar dependencias notification-lambda
+        working-directory: notification-lambda
+        run: go mod download
+
+      - name: Compilar notification-lambda
+        working-directory: notification-lambda
+        env:
+          GOOS: linux
+          GOARCH: amd64
+          CGO_ENABLED: "0"
+        run: go build -ldflags="-s -w" -o bootstrap .
+
+      - name: Empaquetar notification-lambda.zip
+        run: zip -j notification-lambda.zip notification-lambda/bootstrap && ls -lh notification-lambda.zip
+
+      - name: Guardar artefactos
         uses: actions/upload-artifact@v4
         with:
-          name: lambda-zip
-          path: lambda.zip
+          name: lambda-zips
+          path: |
+            lambda.zip
+            notification-lambda.zip
           retention-days: 1
 
   deploy:
@@ -60,16 +77,17 @@ jobs:
       - name: Checkout codigo
         uses: actions/checkout@v4
 
-      - name: Descargar artefacto
+      - name: Descargar artefactos
         uses: actions/download-artifact@v4
         with:
-          name: lambda-zip
+          name: lambda-zips
           path: .
 
-      - name: Posicionar ZIP para Terraform
+      - name: Posicionar ZIPs para Terraform
         run: |
           cp lambda.zip terraform/lambda.zip
-          ls -lh terraform/lambda.zip
+          cp notification-lambda.zip terraform/notification-lambda.zip
+          ls -lh terraform/*.zip
 
       - name: Setup Terraform ${{ env.TF_VERSION }}
         uses: hashicorp/setup-terraform@v3
@@ -99,6 +117,8 @@ jobs:
           TF_VAR_s3_uploads_bucket: ${{ secrets.S3_BUCKET_NAME }}
           TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
           TF_VAR_lambda_zip_path: "./lambda.zip"
+          TF_VAR_notification_lambda_zip_path: "./notification-lambda.zip"
+          TF_VAR_ses_from_email: ${{ secrets.SES_FROM_EMAIL }}
         run: terraform plan -out=tfplan
 
       - name: Terraform Apply
@@ -109,12 +129,14 @@ jobs:
           TF_VAR_s3_uploads_bucket: ${{ secrets.S3_BUCKET_NAME }}
           TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
           TF_VAR_lambda_zip_path: "./lambda.zip"
+          TF_VAR_notification_lambda_zip_path: "./notification-lambda.zip"
+          TF_VAR_ses_from_email: ${{ secrets.SES_FROM_EMAIL }}
         run: terraform apply -auto-approve tfplan
 
-      - name: URL del API Gateway
+      - name: Outputs del deploy
         working-directory: terraform
         run: |
-          echo "=== Outputs de Terraform ==="
           terraform output api_gateway_url
-          echo "=== Estado de la Lambda ==="
-          aws lambda get-function --function-name api-usuarios --query 'Configuration.{Estado:State,Ultima:LastModified,Runtime:Runtime}' 2>/dev/null || echo "Lambda no encontrada"
+          terraform output sns_topic_arn
+          terraform output sqs_queue_url
+          terraform output notification_lambda_name

@@ -54,6 +54,17 @@
       <ion-icon name="chevron-forward-outline" color="medium"></ion-icon>
     </div>
 
+    <div class="menu-card" routerLink="/notificaciones">
+      <div class="menu-icon-box teal">
+        <ion-icon name="mail-outline"></ion-icon>
+      </div>
+      <div class="menu-text">
+        <strong>Notificaciones</strong>
+        <small>Enviar correo vía SNS + SQS</small>
+      </div>
+      <ion-icon name="chevron-forward-outline" color="medium"></ion-icon>
+    </div>
+
   </ng-container>
 
   <div *ngIf="error$ | async as e" class="ion-padding">

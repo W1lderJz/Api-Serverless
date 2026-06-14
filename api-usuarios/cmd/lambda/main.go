@@ -52,6 +52,7 @@ func init() {
 	middleware := adaptadoreshttp.NuevoMiddlewareJWT(jwtSecret)
 	usuarioManejador := adaptadoreshttp.NuevoUsuarioManejador(usuarioServicio)
 	archivoManejador := adaptadoreshttp.NuevoArchivoManejador(archivoServicio)
+	notificacionManejador := adaptadoreshttp.NuevoNotificacionManejador()
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
@@ -70,6 +71,7 @@ func init() {
 
 	usuarioManejador.RegistrarRutas(router, middleware)
 	archivoManejador.RegistrarRutas(router, middleware)
+	notificacionManejador.RegistrarRutas(router, middleware)
 
 	ginLambda = ginadapter.NewV2(router)
 }

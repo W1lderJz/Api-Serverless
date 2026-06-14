@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notificaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="notif-wrap">
+
+    <div class="notif-hero">
+      <div class="hero-icon">
+        <ion-icon name="mail-outline"></ion-icon>
+      </div>
+      <h2>Enviar Correo</h2>
+      <p>Vía SNS → SQS → Lambda → SES</p>
+    </div>
+
+    <form [formGroup]="formulario" (ngSubmit)="enviar()">
+
+      <div class="field">
+        <label>Correo destino</label>
+        <div class="input-row">
+          <ion-icon name="mail-outline"></ion-icon>
+          <ion-input type="email" placeholder="destinatario@correo.com" formControlName="email"></ion-input>
+        </div>
+        <span class="ferr" *ngIf="email?.invalid && email?.touched">Email inválido</span>
+      </div>
+
+      <div class="field">
+        <label>Asunto</label>
+        <div class="input-row">
+          <ion-icon name="text-outline"></ion-icon>
+          <ion-input type="text" placeholder="Asunto del mensaje" formControlName="subject"></ion-input>
+        </div>
+        <span class="ferr" *ngIf="subject?.invalid && subject?.touched">Asunto requerido</span>
+      </div>
+
+      <div class="field">
+        <label>Mensaje</label>
+        <div class="textarea-row">
+          <ion-textarea
+            placeholder="Escribe tu mensaje aquí..."
+            formControlName="message"
+            rows="4">
+          </ion-textarea>
+        </div>
+        <span class="ferr" *ngIf="message?.invalid && message?.touched">Mensaje requerido</span>
+      </div>
+
+      <div class="result-box success" *ngIf="mensajeExito">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <span>{{ mensajeExito }}</span>
+      </div>
+
+      <div class="result-box error" *ngIf="mensajeError">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span>{{ mensajeError }}</span>
+      </div>
+
+      <button type="submit" class="btn-send" [disabled]="cargando">
+        <ion-spinner *ngIf="cargando" name="crescent" class="spin"></ion-spinner>
+        <ion-icon *ngIf="!cargando" name="send-outline"></ion-icon>
+        <span *ngIf="!cargando">Enviar Correo</span>
+      </button>
+
+    </form>
+
+    <div class="flow-card">
+      <p class="flow-title">Flujo AWS</p>
+      <div class="flow-steps">
+        <span>App</span>
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+        <span>API GW</span>
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+        <span>Lambda</span>
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+        <span>SNS</span>
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+        <span>SQS</span>
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+        <span>SES</span>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

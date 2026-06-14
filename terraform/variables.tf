@@ -33,6 +33,17 @@ variable "lambda_zip_path" {
   default     = "../lambda.zip"
 }
 
+variable "notification_lambda_zip_path" {
+  description = "Ruta local al archivo ZIP de la Lambda de notificaciones"
+  type        = string
+  default     = "../notification-lambda.zip"
+}
+
+variable "ses_from_email" {
+  description = "Email verificado en SES para enviar notificaciones"
+  type        = string
+}
+
 variable "log_retention_days" {
   description = "Días de retención de logs en CloudWatch"
   type        = number
