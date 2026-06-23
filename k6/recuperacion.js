@@ -22,7 +22,13 @@ export default function () {
   );
 
   const token = loginResp.json('token');
-  if (!token) return;
+
+  check(loginResp, { 'login exitoso': (r) => r.status === 200 });
+
+  if (!token) {
+    sleep(2);
+    return;
+  }
 
   const resp = http.post(
     `${BASE_URL}/notifications/send`,

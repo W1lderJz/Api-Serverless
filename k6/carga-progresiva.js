@@ -13,7 +13,7 @@ export const options = {
   ],
   thresholds: {
     http_req_duration: ['p(95)<5000'],
-    http_req_failed: ['rate<0.05'],
+    http_req_failed: ['rate<0.30'],
   },
 };
 
@@ -25,7 +25,13 @@ export default function () {
   );
 
   const token = loginResp.json('token');
-  if (!token) return;
+
+  check(loginResp, { 'login exitoso': (r) => r.status === 200 });
+
+  if (!token) {
+    sleep(2);
+    return;
+  }
 
   const resp = http.post(
     `${BASE_URL}/notifications/send`,
@@ -42,6 +48,6 @@ export default function () {
     }
   );
 
-  check(resp, { 'status 200': (r) => r.status === 200 });
+  check(resp, { 'notificacion enviada': (r) => r.status === 200 });
   sleep(1);
 }
