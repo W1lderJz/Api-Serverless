@@ -1,6 +1,7 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { BASE_URL, CREDENTIALS, NOTIFICATION_BODY } from './config.js';
+
+const BASE_URL = 'https://c381cvli4m.execute-api.us-east-1.amazonaws.com';
 
 export const options = {
   vus: 10,
@@ -11,26 +12,27 @@ export const options = {
   },
 };
 
-let token = '';
-
-export function setup() {
+export default function () {
   const loginResp = http.post(
     `${BASE_URL}/auth/login`,
-    JSON.stringify(CREDENTIALS),
+    JSON.stringify({ email: 'test@demo.com', password: 'demo1234' }),
     { headers: { 'Content-Type': 'application/json' } }
   );
-  token = loginResp.json('token');
-  return { token };
-}
 
-export default function (data) {
+  const token = loginResp.json('token');
+  if (!token) return;
+
   const resp = http.post(
     `${BASE_URL}/notifications/send`,
-    NOTIFICATION_BODY,
+    JSON.stringify({
+      email: 'wilderjimenezz03@gmail.com',
+      subject: 'Prueba de Carga K6',
+      message: 'Mensaje generado por prueba de carga',
+    }),
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${data.token}`,
+        Authorization: `Bearer ${token}`,
       },
     }
   );
