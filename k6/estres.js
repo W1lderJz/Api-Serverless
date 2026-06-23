@@ -16,26 +16,20 @@ export const options = {
   ],
   thresholds: {
     http_req_duration: ['p(95)<5000'],
-    http_req_failed: ['rate<0.30'],
+    http_req_failed: ['rate<0.10'],
   },
 };
 
-export default function () {
-  const loginResp = http.post(
+export function setup() {
+  const r = http.post(
     `${BASE_URL}/auth/login`,
     JSON.stringify({ email: 'test@demo.com', password: 'demo1234' }),
     { headers: { 'Content-Type': 'application/json' } }
   );
+  return { token: r.json('token') };
+}
 
-  const token = loginResp.json('token');
-
-  check(loginResp, { 'login exitoso': (r) => r.status === 200 });
-
-  if (!token) {
-    sleep(2);
-    return;
-  }
-
+export default function (data) {
   const resp = http.post(
     `${BASE_URL}/notifications/send`,
     JSON.stringify({
@@ -46,7 +40,7 @@ export default function () {
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${data.token}`,
       },
     }
   );
